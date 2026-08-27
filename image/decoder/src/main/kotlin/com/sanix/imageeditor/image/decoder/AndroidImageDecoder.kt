@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 class AndroidImageDecoder(private val contentResolver: ContentResolver) : ImageDecoder {
     override suspend fun decode(source: ImageSource): DecodedImage = withContext(Dispatchers.IO) {
         val uri = Uri.parse(source.value)
-        val decoded = decodeBitmap(uri)
+        val decoded = decodeBitmap(source)
         val bytes = contentResolver.openInputStream(uri).use { input -> input?.readBytes() }
             ?: error("Unable to read image: $uri")
         DecodedImage(bytes, ImageMetadata(decoded.width, decoded.height, contentResolver.getType(uri)))

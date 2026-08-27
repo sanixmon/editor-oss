@@ -7,4 +7,7 @@ android { namespace = "com.sanix.imageeditor.core.geometry" }
 
 kotlin { jvmToolchain(17) }
 
-dependencies { api(project(":core:model")) }
+dependencies {
+    api(project(":core:model"))
+    testImplementation(kotlin("test"))
+}

@@ -11,4 +11,5 @@ dependencies {
     api(project(":core:model"))
     implementation(project(":core:geometry"))
     implementation(project(":core:history"))
+    testImplementation(kotlin("test"))
 }

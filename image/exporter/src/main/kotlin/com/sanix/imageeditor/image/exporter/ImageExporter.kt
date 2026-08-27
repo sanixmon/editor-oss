@@ -1,10 +1,9 @@
 package com.sanix.imageeditor.image.exporter
 
-import com.sanix.imageeditor.core.model.Project
-
 enum class ExportFormat { PNG, JPEG, WEBP }
+data class RenderedImage(val bytes: ByteArray, val width: Int, val height: Int)
 data class ExportResult(val location: String)
 
 interface ImageExporter {
-    suspend fun export(project: Project, format: ExportFormat): ExportResult
+    suspend fun export(image: RenderedImage, format: ExportFormat): ExportResult
 }

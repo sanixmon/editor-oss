@@ -17,7 +17,8 @@ dependencyResolutionManagement {
 rootProject.name = "editor-oss"
 include(":app")
 include(":core:model", ":core:geometry", ":core:history", ":core:editor", ":core:common")
-include(":rendering:renderer", ":rendering:opengl")
-include(":image:decoder", ":image:processor", ":image:exporter")
+include(":engine:renderer", ":engine:opengl", ":engine:texture", ":engine:compositor")
+include(":image:decoder", ":image:exporter")
+include(":image:processor")
 include(":data:project", ":data:media")
 include(":feature:editor")

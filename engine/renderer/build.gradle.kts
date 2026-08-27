@@ -5,4 +5,7 @@ plugins {
 
 android { namespace = "com.sanix.imageeditor.engine.renderer" }
 kotlin { jvmToolchain(17) }
-dependencies { api(project(":core:model")) }
+dependencies {
+    api(project(":core:model"))
+    api(project(":engine:texture"))
+}

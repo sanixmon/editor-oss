@@ -32,7 +32,10 @@ class Editor(initialState: EditorState) {
 
 data class SelectObjectCommand(private val id: ObjectId?) : EditorCommand {
     private var previous: ObjectId? = null
-    override fun execute(state: EditorState): EditorState { previous = state.selectedObjectId; return state.copy(selectedObjectId = id) }
+    override fun execute(state: EditorState): EditorState {
+        previous = state.selectedObjectId
+        return state.copy(selectedObjectId = id)
+    }
     override fun undo(state: EditorState) = state.copy(selectedObjectId = previous)
 }
 

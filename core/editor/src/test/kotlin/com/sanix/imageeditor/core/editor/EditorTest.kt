@@ -22,5 +22,8 @@ class EditorTest {
         assertEquals(image.transform, editor.state.project.objects.single().transform)
         editor.redo()
         assertEquals(moved, editor.state.project.objects.single().transform)
+        editor.undo()
+        editor.undo()
+        assertEquals(0, editor.state.project.objects.size)
     }
 }

@@ -29,4 +29,4 @@ The domain modules do not depend on Compose, Activities, OpenGL, or persistence 
 
 ## CI-first workflow
 
-GitHub Actions runs the Android build, lint, and tests, then uploads the debug APK. The Gradle Wrapper will be committed before the first CI build; local development can remain lightweight while GitHub-hosted runners provide the Android SDK and build resources.
+GitHub Actions installs Gradle 8.11.1, runs the Android build, lint, and tests, then uploads the debug APK. Local development can remain lightweight while GitHub-hosted runners provide the Android SDK and build resources.

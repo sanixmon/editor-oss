@@ -1,14 +1,14 @@
 package com.sanix.imageeditor.core.editor
 
 import com.sanix.imageeditor.core.history.CommandHistory
-import com.sanix.imageeditor.core.model.Layer
-import com.sanix.imageeditor.core.model.LayerId
+import com.sanix.imageeditor.core.model.EditorObject
+import com.sanix.imageeditor.core.model.ObjectId
 import com.sanix.imageeditor.core.model.Project
 import com.sanix.imageeditor.core.model.Transform
 
 data class EditorState(
     val project: Project,
-    val selectedLayerId: LayerId? = null,
+    val selectedObjectId: ObjectId? = null,
 )
 
 interface EditorCommand {
@@ -19,7 +19,6 @@ interface EditorCommand {
 class Editor(initialState: EditorState) {
     var state: EditorState = initialState
         private set
-
     private val history = CommandHistory<EditorCommand>()
     private val redoHistory = CommandHistory<EditorCommand>()
 
@@ -28,43 +27,35 @@ class Editor(initialState: EditorState) {
         history.push(command)
         redoHistory.clear()
     }
-
-    fun undo() {
-        history.undo()?.let { command ->
-            state = command.undo(state)
-            redoHistory.push(command)
-        }
-    }
-
-    fun redo() {
-        redoHistory.redo()?.let { command ->
-            state = command.execute(state)
-            history.push(command)
-        }
-    }
+    fun undo() { history.undo()?.let { state = it.undo(state); redoHistory.push(it) } }
+    fun redo() { redoHistory.redo()?.let { state = it.execute(state); history.push(it) } }
 }
 
-data class AddLayerCommand(private val layer: Layer) : EditorCommand {
-    override fun execute(state: EditorState) = state.copy(project = state.project.copy(layers = state.project.layers + layer))
-    override fun undo(state: EditorState) = state.copy(project = state.project.copy(layers = state.project.layers.filterNot { it.id == layer.id }))
+data class AddObjectCommand(private val objectToAdd: EditorObject) : EditorCommand {
+    override fun execute(state: EditorState) = state.copy(project = state.project.copy(objects = state.project.objects + objectToAdd))
+    override fun undo(state: EditorState) = state.copy(project = state.project.copy(objects = state.project.objects.filterNot { it.id == objectToAdd.id }))
 }
 
-data class RemoveLayerCommand(private val layer: Layer) : EditorCommand {
-    override fun execute(state: EditorState) = state.copy(project = state.project.copy(layers = state.project.layers.filterNot { it.id == layer.id }))
-    override fun undo(state: EditorState) = state.copy(project = state.project.copy(layers = state.project.layers + layer))
+data class RemoveObjectCommand(private val objectToRemove: EditorObject) : EditorCommand {
+    override fun execute(state: EditorState) = state.copy(project = state.project.copy(objects = state.project.objects.filterNot { it.id == objectToRemove.id }))
+    override fun undo(state: EditorState) = state.copy(project = state.project.copy(objects = state.project.objects + objectToRemove))
 }
 
-data class TransformLayerCommand(private val id: LayerId, private val from: Transform, private val to: Transform) : EditorCommand {
+data class TransformObjectCommand(private val id: ObjectId, private val from: Transform, private val to: Transform) : EditorCommand {
     override fun execute(state: EditorState) = state.withTransform(id, to)
     override fun undo(state: EditorState) = state.withTransform(id, from)
 }
 
-private fun EditorState.withTransform(id: LayerId, transform: Transform) = copy(
-    project = project.copy(layers = project.layers.map { layer ->
-        if (layer.id == id) when (layer) {
-            is com.sanix.imageeditor.core.model.ImageLayer -> layer.copy(transform = transform)
-            is com.sanix.imageeditor.core.model.TextLayer -> layer.copy(transform = transform)
-            is com.sanix.imageeditor.core.model.ShapeLayer -> layer.copy(transform = transform)
-        } else layer
-    }),
+private fun EditorState.withTransform(id: ObjectId, transform: Transform) = copy(
+    project = project.copy(objects = project.objects.map { it.updateTransform(id, transform) }),
 )
+
+private fun EditorObject.updateTransform(id: ObjectId, transform: Transform): EditorObject =
+    if (this.id == id) when (this) {
+        is com.sanix.imageeditor.core.model.ImageObject -> copy(transform = transform)
+        is com.sanix.imageeditor.core.model.TextObject -> copy(transform = transform)
+        is com.sanix.imageeditor.core.model.StickerObject -> copy(transform = transform)
+        is com.sanix.imageeditor.core.model.ShapeObject -> copy(transform = transform)
+        is com.sanix.imageeditor.core.model.SpeechBubbleObject -> copy(transform = transform)
+        is com.sanix.imageeditor.core.model.EffectObject -> copy(transform = transform)
+    } else this

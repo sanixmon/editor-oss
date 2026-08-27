@@ -6,7 +6,6 @@ import com.sanix.imageeditor.rendering.Renderer
 
 class OpenGLRenderer : Renderer {
     private var initialized = false
-
     override fun initialize() { initialized = true }
     override fun resize(width: Int, height: Int) {
         check(initialized) { "Renderer must be initialized before resize" }
@@ -14,7 +13,7 @@ class OpenGLRenderer : Renderer {
     }
     override fun render(project: Project, target: RenderTarget) {
         check(initialized) { "Renderer must be initialized before render" }
-        project.layers.asSequence().filter { it.visible }.forEach { /* GPU compositing will be added in Phase 2. */ }
+        project.objects.asSequence().filter { it.visible }.forEach { /* GPU compositor lands in Phase 2. */ }
     }
     override fun dispose() { initialized = false }
 }

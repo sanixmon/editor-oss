@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.runtime)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation(project(":core:editor"))
     implementation(project(":engine:renderer"))
     implementation(project(":image:processor"))

@@ -8,4 +8,5 @@ kotlin { jvmToolchain(17) }
 dependencies {
     api(project(":core:model"))
     api(project(":engine:texture"))
+    testImplementation(kotlin("test"))
 }

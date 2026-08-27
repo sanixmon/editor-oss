@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(project(":core:editor"))
-    implementation(project(":rendering:renderer"))
+    implementation(project(":engine:renderer"))
     implementation(project(":image:processor"))
     implementation(project(":data:project"))
 }

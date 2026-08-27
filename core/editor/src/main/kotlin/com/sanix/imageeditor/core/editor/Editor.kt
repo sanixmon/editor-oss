@@ -25,9 +25,23 @@ class Editor(initialState: EditorState) {
     private val history = CommandHistory<EditorCommand>()
     private val redoHistory = CommandHistory<EditorCommand>()
 
-    fun execute(command: EditorCommand) { state = command.execute(state); history.push(command); redoHistory.clear() }
-    fun undo() { history.undo()?.let { state = it.undo(state); redoHistory.push(it) } }
-    fun redo() { redoHistory.redo()?.let { state = it.execute(state); history.push(it) } }
+    fun execute(command: EditorCommand) {
+        state = command.execute(state)
+        history.push(command)
+        redoHistory.clear()
+    }
+    fun undo() {
+        history.popUndo()?.let { command ->
+            state = command.undo(state)
+            redoHistory.pushUndo(command)
+        }
+    }
+    fun redo() {
+        redoHistory.popUndo()?.let { command ->
+            state = command.execute(state)
+            history.pushUndo(command)
+        }
+    }
 }
 
 data class SelectObjectCommand(private val id: ObjectId?) : EditorCommand {

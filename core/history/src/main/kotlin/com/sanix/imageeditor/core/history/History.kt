@@ -19,4 +19,9 @@ class CommandHistory<T> : History<T> {
     override fun undo(): T? = undoStack.removeLastOrNull()?.also(redoStack::addLast)
     override fun redo(): T? = redoStack.removeLastOrNull()?.also(undoStack::addLast)
     override fun clear() { undoStack.clear(); redoStack.clear() }
+
+    fun popUndo(): T? = undoStack.removeLastOrNull()
+    fun popRedo(): T? = redoStack.removeLastOrNull()
+    fun pushUndo(command: T) = undoStack.addLast(command)
+    fun pushRedo(command: T) = redoStack.addLast(command)
 }
